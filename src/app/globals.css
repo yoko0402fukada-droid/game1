@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-gradient-start: #fdf9f3;
+  --bg-gradient-end: #faf0e4;
+}
+
+body {
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  min-height: 100vh;
+}
+
+/* スクロールバーをかわいく */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #faf0e4;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4956a;
+  border-radius: 3px;
+}
+
+/* チェックボックスのカスタムスタイル */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+}
