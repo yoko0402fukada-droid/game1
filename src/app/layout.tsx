@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "にゃんTodo",
-  description: "猫モチーフのシンプルTodoアプリ",
+  title: "サカバンバスピス 古生物クイズ",
+  description: "サカバンバスピスと一緒に古生物の世界を学ぼう！全30問の4択クイズ",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body className="font-fossil">{children}</body>
     </html>
   );
 }

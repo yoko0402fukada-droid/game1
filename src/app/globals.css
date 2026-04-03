@@ -1,31 +1,757 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --bg-gradient-start: #fdf9f3;
-  --bg-gradient-end: #faf0e4;
+/* ===== ベース ===== */
+* { box-sizing: border-box; }
+
+html, body {
+  font-family: 'Noto Serif JP', 'Georgia', serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  background: #010C20;
+  color: #C8E8FF;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #010C20; }
+::-webkit-scrollbar-thumb { background: #0A4070; border-radius: 3px; }
+
+/* =========================================
+   OCEAN BACKGROUND & EFFECTS
+   ========================================= */
+
+.ocean-bg {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #010C20 0%,
+    #031A36 18%,
+    #062B50 38%,
+    #0A3D65 58%,
+    #0C4878 78%,
+    #0E5080 100%
+  );
+  z-index: 0;
+}
+
+.light-rays {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 75%;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(172deg, rgba(80,170,255,0.13) 0%, transparent 55%),
+    linear-gradient(186deg, rgba(60,150,230,0.10) 0%, transparent 60%),
+    linear-gradient(163deg, rgba(100,200,255,0.08) 0%, transparent 50%),
+    linear-gradient(195deg, rgba(70,160,240,0.08) 0%, transparent 45%);
+  animation: raysAnimate 9s ease-in-out infinite alternate;
+}
+
+@keyframes raysAnimate {
+  0%   { opacity: 0.7; transform: scaleX(0.97); }
+  100% { opacity: 1;   transform: scaleX(1.03); }
+}
+
+/* 泡 */
+.bubbles-container {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(200,240,255,0.55), rgba(100,200,255,0.12));
+  border: 1px solid rgba(160,220,255,0.35);
+  animation: bubbleRise linear infinite;
+}
+
+@keyframes bubbleRise {
+  0%   { transform: translateY(0)      translateX(0);   opacity: 0; }
+  8%   { opacity: 0.7; }
+  92%  { opacity: 0.4; }
+  100% { transform: translateY(-105vh) translateX(15px); opacity: 0; }
+}
+
+/* 海底ライン */
+.ocean-floor {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg,
+    rgba(20,80,140,0) 0%,
+    rgba(30,100,160,0.4) 20%,
+    rgba(20,80,140,0.5) 50%,
+    rgba(30,100,160,0.4) 80%,
+    rgba(20,80,140,0) 100%
+  );
+  z-index: 5;
+}
+
+/* =========================================
+   HOME SCREEN
+   ========================================= */
+
+.ocean-home {
   min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-/* スクロールバーをかわいく */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #faf0e4;
-}
-::-webkit-scrollbar-thumb {
-  background: #d4956a;
-  border-radius: 3px;
+.home-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem 4rem;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
-/* チェックボックスのカスタムスタイル */
-input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
+.home-title-area {
+  margin-bottom: 0.25rem;
 }
+
+.home-label {
+  color: rgba(140,210,255,0.7);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.4rem;
+}
+
+.home-title {
+  font-size: clamp(2.8rem, 9vw, 5rem);
+  font-weight: 900;
+  background: linear-gradient(180deg, #B0ECFF 0%, #50C8FF 45%, #0090E0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  margin: 0;
+  filter: drop-shadow(0 0 24px rgba(80,200,255,0.45));
+}
+
+.home-character {
+  width: min(300px, 78vw);
+  margin: 1.25rem auto;
+  filter: drop-shadow(0 12px 32px rgba(0,140,255,0.35));
+  animation: sacaSwim 3.2s ease-in-out infinite;
+}
+
+@keyframes sacaSwim {
+  0%, 100% { transform: translateY(0)    rotate(-2deg); }
+  50%       { transform: translateY(-14px) rotate(2deg);  }
+}
+
+.home-card {
+  background: rgba(4, 22, 55, 0.72);
+  border: 1px solid rgba(80,180,255,0.22);
+  border-radius: 18px;
+  padding: 1.3rem 1.6rem;
+  margin-bottom: 1.75rem;
+  backdrop-filter: blur(12px);
+  width: 100%;
+}
+
+.home-desc {
+  color: rgba(200,235,255,0.92);
+  font-size: 0.95rem;
+  line-height: 1.75;
+  margin-bottom: 0.85rem;
+}
+
+.home-desc strong {
+  color: #7DD8FF;
+}
+
+.home-tags {
+  display: flex;
+  justify-content: center;
+  gap: 1.1rem;
+  font-size: 0.75rem;
+  color: rgba(120,210,255,0.85);
+  margin-bottom: 0.85rem;
+}
+
+.home-levels {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* スタートボタン */
+.ocean-start-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #0878D0, #055BA0);
+  border: 2px solid rgba(100,200,255,0.5);
+  border-radius: 50px;
+  color: #EAF6FF;
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 1rem 2.8rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 32px rgba(0,140,255,0.4), inset 0 0 16px rgba(100,200,255,0.08);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  margin-bottom: 1.25rem;
+}
+
+.ocean-start-btn:hover {
+  background: linear-gradient(135deg, #0A96E8, #0878D0);
+  box-shadow: 0 0 44px rgba(0,170,255,0.6), inset 0 0 20px rgba(150,230,255,0.15);
+  transform: translateY(-3px);
+  border-color: rgba(160,230,255,0.7);
+}
+
+.home-note {
+  font-size: 0.72rem;
+  color: rgba(100,170,220,0.55);
+  line-height: 1.6;
+}
+
+/* バッジ */
+.ocean-badge {
+  display: inline-block;
+  padding: 0.2rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.ocean-badge.easy   { background: rgba(0,80,40,0.6);   border: 1px solid #2DBF6F; color: #80FFBA; }
+.ocean-badge.normal { background: rgba(10,50,100,0.6);  border: 1px solid #2A9FFF; color: #90D4FF; }
+.ocean-badge.hard   { background: rgba(80,10,100,0.6);  border: 1px solid #C060FF; color: #E0AAFF; }
+
+/* =========================================
+   QUIZ SCREEN
+   ========================================= */
+
+.ocean-quiz-bg {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ヘッダー */
+.quiz-ocean-header {
+  position: relative;
+  z-index: 20;
+  background: rgba(2, 15, 40, 0.85);
+  border-bottom: 1px solid rgba(60,150,255,0.2);
+  backdrop-filter: blur(8px);
+  padding: 0.7rem 1rem;
+}
+
+.quiz-header-inner {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.quiz-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  gap: 0.5rem;
+}
+
+.quiz-home-link {
+  color: rgba(120,200,255,0.75);
+  font-size: 0.78rem;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+.quiz-home-link:hover { color: rgba(170,230,255,1); }
+
+.quiz-header-title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #80D4FF;
+  letter-spacing: 0.05em;
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+.quiz-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.quiz-score-display {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #90DCFF;
+}
+
+.quiz-score-total {
+  color: rgba(100,180,240,0.6);
+  font-weight: 400;
+}
+
+.quiz-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.quiz-progress-bg {
+  flex: 1;
+  height: 8px;
+  background: rgba(10,40,90,0.8);
+  border: 1px solid rgba(60,150,255,0.2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.quiz-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0878D0, #40C0FF);
+  border-radius: 99px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 8px rgba(60,160,255,0.5);
+}
+
+.quiz-progress-label {
+  font-size: 0.72rem;
+  color: rgba(120,200,255,0.8);
+  width: 44px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* レベルバッジ */
+.ocean-level-badge {
+  display: inline-block;
+  padding: 0.18rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.ocean-level-badge.lv1 { background: rgba(0,60,30,0.7);  border: 1px solid #2DBF6F; color: #80FFBA; }
+.ocean-level-badge.lv2 { background: rgba(5,40,90,0.7);  border: 1px solid #2A9FFF; color: #90D4FF; }
+.ocean-level-badge.lv3 { background: rgba(70,0,90,0.7);  border: 1px solid #C060FF; color: #E0AAFF; }
+
+/* メインエリア */
+.quiz-main {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1.25rem 1rem 2rem;
+}
+
+/* キャラ */
+.quiz-char-area {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* カード */
+.quiz-ocean-card {
+  background: rgba(4, 20, 52, 0.82);
+  border: 1px solid rgba(60,150,255,0.22);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,40,100,0.3);
+}
+
+.question-card {
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.question-num {
+  color: #40B8FF;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.question-text {
+  color: rgba(210,240,255,0.95);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* 選択肢 */
+.choices-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.ocean-choice-btn {
+  background: rgba(5, 25, 65, 0.75);
+  border: 1.5px solid rgba(60,150,255,0.25);
+  border-radius: 10px;
+  color: rgba(200,235,255,0.92);
+  cursor: pointer;
+  font-family: 'Noto Serif JP', serif;
+  font-size: 0.93rem;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  transition: all 0.18s ease;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  backdrop-filter: blur(6px);
+}
+
+.ocean-choice-btn:hover:not(:disabled) {
+  background: rgba(8, 40, 100, 0.85);
+  border-color: rgba(80,180,255,0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+}
+
+.ocean-choice-btn:disabled { cursor: default; }
+
+.choice-label {
+  color: #40B8FF;
+  font-weight: 700;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.ocean-choice-btn.choice-correct {
+  background: rgba(0, 60, 30, 0.8);
+  border-color: #2DBF6F;
+  box-shadow: 0 0 16px rgba(45,191,111,0.35);
+  color: #90FFBA;
+}
+
+.ocean-choice-btn.choice-wrong {
+  background: rgba(80, 10, 10, 0.8);
+  border-color: #FF5050;
+  box-shadow: 0 0 12px rgba(255,80,80,0.25);
+  color: #FFAAAA;
+}
+
+.ocean-choice-btn.choice-dim { opacity: 0.35; }
+
+/* 解説 */
+.ocean-explain {
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  border: 1.5px solid;
+  backdrop-filter: blur(10px);
+}
+
+.explain-correct {
+  background: rgba(0,50,25,0.8);
+  border-color: #2DBF6F;
+}
+
+.explain-wrong {
+  background: rgba(60,5,5,0.8);
+  border-color: #FF5050;
+}
+
+.explain-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.explain-icon { font-size: 1.4rem; }
+
+.explain-result { font-weight: 700; font-size: 0.9rem; }
+.text-correct   { color: #70FFAA; }
+.text-wrong     { color: #FF8080; }
+
+.explain-text {
+  color: rgba(210,240,255,0.9);
+  font-size: 0.87rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* 結果ボタン */
+.ocean-quiz-btn {
+  display: block;
+  width: 100%;
+  background: linear-gradient(135deg, #0878D0, #055BA0);
+  border: 1.5px solid rgba(100,200,255,0.4);
+  border-radius: 10px;
+  color: #EAF6FF;
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 20px rgba(0,130,255,0.3);
+  text-decoration: none;
+}
+
+.ocean-quiz-btn:hover {
+  background: linear-gradient(135deg, #0A96E8, #0878D0);
+  box-shadow: 0 0 28px rgba(0,160,255,0.5);
+  transform: translateY(-1px);
+}
+
+.ocean-quiz-btn-outline {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid rgba(80,180,255,0.35);
+  border-radius: 10px;
+  color: rgba(140,210,255,0.85);
+  font-family: 'Noto Serif JP', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.ocean-quiz-btn-outline:hover {
+  background: rgba(8,40,100,0.5);
+  border-color: rgba(120,210,255,0.55);
+  color: rgba(180,235,255,1);
+}
+
+/* 結果カード */
+.quiz-result-content {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.result-card {
+  padding: 2rem 1.5rem;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+.result-title    { font-size: 1.6rem; font-weight: 900; color: #80D4FF; margin: 0 0 0.2rem; }
+.result-subtitle { font-size: 0.8rem; color: rgba(120,200,255,0.6); letter-spacing: 0.1em; margin: 0 0 1.25rem; }
+
+.result-score-area  { margin: 1rem 0; }
+.result-score-num   { font-size: 4.5rem; font-weight: 900; background: linear-gradient(135deg, #90E4FF, #40B8FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+.result-score-denom { font-size: 1.4rem; color: rgba(100,190,255,0.7); }
+.result-pct         { color: rgba(160,220,255,0.75); font-size: 0.85rem; margin: 0.3rem 0 0; }
+
+.result-grade-box {
+  background: rgba(5,30,70,0.7);
+  border: 1px solid rgba(60,150,255,0.2);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.result-grade     { color: rgba(200,240,255,0.95); font-weight: 700; font-size: 1.1rem; margin: 0 0 0.25rem; }
+.result-grade-sub { color: rgba(150,220,255,0.75); font-size: 0.82rem; margin: 0; }
+
+/* フッター */
+.quiz-footer {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 0.75rem;
+  font-size: 0.7rem;
+  color: rgba(80,150,220,0.45);
+}
+
+/* =========================================
+   CHARACTER ANIMATIONS
+   ========================================= */
+
+.saca-character { transform-origin: center center; }
+.saca-idle    { animation: sacaFloat 2.8s ease-in-out infinite; }
+.saca-correct { animation: sacaSpin  0.8s cubic-bezier(0.36,0.07,0.19,0.97) forwards; }
+.saca-wrong   { animation: sacaShake 0.5s ease-in-out 2 forwards; }
+
+@keyframes sacaFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes sacaSpin {
+  0%   { transform: rotate(0deg)   scale(1);    }
+  25%  { transform: rotate(90deg)  scale(1.15); }
+  50%  { transform: rotate(180deg) scale(1);    }
+  75%  { transform: rotate(270deg) scale(1.15); }
+  100% { transform: rotate(360deg) scale(1);    }
+}
+
+@keyframes sacaShake {
+  0%, 100% { transform: translateX(0)    rotate(0deg); }
+  20%       { transform: translateX(-10px) rotate(-4deg); }
+  40%       { transform: translateX(10px)  rotate(4deg);  }
+  60%       { transform: translateX(-8px)  rotate(-3deg); }
+  80%       { transform: translateX(8px)   rotate(3deg);  }
+}
+
+/* 涙 */
+.tear { animation: tearFall 0.9s ease-in infinite; }
+.tear-1 { animation-delay: 0s;    }
+.tear-2 { animation-delay: 0.25s; }
+.tear-3 { animation-delay: 0.5s;  }
+.tear-4 { animation-delay: 0.1s;  }
+.tear-5 { animation-delay: 0.4s;  }
+
+@keyframes tearFall {
+  0%   { transform: translateY(0)   scale(1);   opacity: 1; }
+  80%  { opacity: 0.8; }
+  100% { transform: translateY(50px) scale(0.4); opacity: 0; }
+}
+
+/* キラキラ */
+.sparkle { animation: sparklePop 0.6s ease-out forwards; }
+.sparkle-1 { animation-delay: 0s;    }
+.sparkle-2 { animation-delay: 0.1s;  }
+.sparkle-3 { animation-delay: 0.2s;  }
+.sparkle-4 { animation-delay: 0.15s; }
+.sparkle-5 { animation-delay: 0.05s; }
+
+@keyframes sparklePop {
+  0%   { transform: scale(0) rotate(0deg);   opacity: 0; }
+  50%  { transform: scale(1.3) rotate(20deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg);   opacity: 1; }
+}
+
+/* =========================================
+   TREASURE CHEST
+   ========================================= */
+
+.treasure-wrapper  { animation: treasureAppear 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+.chest-lid         { animation: lidOpen 1s cubic-bezier(0.34,1.56,0.64,1) 0.3s both; transform-origin: 120px 100px; }
+
+@keyframes treasureAppear {
+  0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.1) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg);   opacity: 1; }
+}
+
+@keyframes lidOpen {
+  0%   { transform: rotateX(0deg); }
+  100% { transform: rotateX(-50deg) translateY(-20px); }
+}
+
+.gem { animation: gemFly 1.2s cubic-bezier(0.34,1.56,0.64,1) both; }
+.gem-1 { animation-delay: 0.5s;  --tx: -30px; --ty: -40px; }
+.gem-2 { animation-delay: 0.6s;  --tx:  30px; --ty: -50px; }
+.gem-3 { animation-delay: 0.55s; --tx: -50px; --ty: -30px; }
+.gem-4 { animation-delay: 0.65s; --tx:  50px; --ty: -35px; }
+.gem-5 { animation-delay: 0.7s;  --tx: -60px; --ty: -20px; }
+.gem-6 { animation-delay: 0.5s;  --tx:   0px; --ty: -60px; }
+.gem-7 { animation-delay: 0.75s; --tx:  65px; --ty: -15px; }
+.gem-8 { animation-delay: 0.8s;  --tx: -70px; --ty: -10px; }
+
+@keyframes gemFly {
+  0%   { transform: translate(0,0) scale(0); opacity: 0; }
+  60%  { opacity: 1; }
+  100% { transform: translate(var(--tx),var(--ty)) scale(1); opacity: 1; }
+}
+
+.chest-sparkle { animation: chestSparkleLoop 1.5s ease-in-out infinite; }
+.cs-1 { animation-delay: 0s; }
+.cs-2 { animation-delay: 0.3s; }
+.cs-3 { animation-delay: 0.6s; }
+.cs-4 { animation-delay: 0.15s; }
+.cs-5 { animation-delay: 0.45s; }
+
+@keyframes chestSparkleLoop {
+  0%, 100% { transform: scale(1) rotate(0deg);    opacity: 1; }
+  50%       { transform: scale(1.3) rotate(15deg); opacity: 0.7; }
+}
+
+/* =========================================
+   LEVEL UP OVERLAY
+   ========================================= */
+
+.levelup-modal-bg {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  background: rgba(1,10,30,0.78);
+  backdrop-filter: blur(4px);
+}
+
+.levelup-overlay {
+  animation: levelupAnim 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+
+@keyframes levelupAnim {
+  0%   { transform: scale(0.5) translateY(20px); opacity: 0; }
+  100% { transform: scale(1)   translateY(0);    opacity: 1; }
+}
+
+/* =========================================
+   EXPLANATION SLIDE-UP
+   ========================================= */
+
+.explanation-box {
+  animation: fadeSlideUp 0.35s ease-out forwards;
+}
+
+@keyframes fadeSlideUp {
+  0%   { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0);    opacity: 1; }
+}
+
+/* =========================================
+   UTILITY
+   ========================================= */
+
+.font-fossil { font-family: 'Noto Serif JP', 'Georgia', serif; }
