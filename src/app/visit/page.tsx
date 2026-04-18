@@ -31,11 +31,19 @@ function fmtShort(iso: string): string {
   return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 }
 
+// Google カレンダー（カレンダーを「公開」設定にする必要があります）
+const CALENDAR_ID = '6f648888d7459187812a96d248acd4ff7a700843baedc0744c08f80656a3ee24%40group.calendar.google.com';
+const CALENDAR_SRC = `https://calendar.google.com/calendar/embed?src=${CALENDAR_ID}&ctz=Asia%2FTokyo&hl=ja&mode=AGENDA&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0`;
+// 福岡市城南区別府3丁目周辺（緯度経度で指定）
+const MAP_SRC = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3323.7!2d130.3594!3d33.5808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x354191c5e2b6a8a9%3A0x0!2z56aP5bKh5biC5Z6L5Y2X5Yy65YiG5bqD77yT5LiB55uu!5e0!3m2!1sja!2sjp!4v1';
+
 export default function VisitPage() {
   const [visitData, setVisitData] = useState<VisitData>({});
   const [recordModal, setRecordModal] = useState<Location | null>(null);
   const [historyModal, setHistoryModal] = useState<Location | null>(null);
   const [filter, setFilter] = useState<'all' | '未訪問' | '在宅' | '不在'>('all');
+  const [mapOpen, setMapOpen] = useState(true);
+  const [calOpen, setCalOpen] = useState(true);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -88,6 +96,58 @@ export default function VisitPage() {
           <div style={{ fontSize: 13, color: '#bfdbfe', marginTop: 2 }}>別府3丁目エリア（最大6ヶ月記録）</div>
         </div>
       </header>
+
+      {/* ===== 地図セクション ===== */}
+      <section style={{ background: '#fff', borderBottom: '1px solid #e5e7eb' }}>
+        <button
+          onClick={() => setMapOpen((v) => !v)}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 17, fontWeight: 700, color: '#1d4ed8' }}
+        >
+          <span>🗺️ エリア地図（別府3丁目）</span>
+          <span style={{ fontSize: 20, color: '#9ca3af' }}>{mapOpen ? '▲' : '▼'}</span>
+        </button>
+        {mapOpen && (
+          <div style={{ width: '100%', height: 260, overflow: 'hidden' }}>
+            <iframe
+              src={MAP_SRC}
+              width="100%"
+              height="260"
+              style={{ border: 0, display: 'block' }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        )}
+      </section>
+
+      {/* ===== カレンダーセクション ===== */}
+      <section style={{ background: '#fff', borderBottom: '1px solid #e5e7eb' }}>
+        <button
+          onClick={() => setCalOpen((v) => !v)}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 17, fontWeight: 700, color: '#1d4ed8' }}
+        >
+          <span>📅 スケジュール</span>
+          <span style={{ fontSize: 20, color: '#9ca3af' }}>{calOpen ? '▲' : '▼'}</span>
+        </button>
+        {calOpen && (
+          <div style={{ position: 'relative', width: '100%', height: 340 }}>
+            <iframe
+              src={CALENDAR_SRC}
+              width="100%"
+              height="340"
+              style={{ border: 0, display: 'block' }}
+              scrolling="no"
+            />
+            {/* カレンダーが非公開の場合のフォールバック案内 */}
+            <noscript>
+              <p style={{ padding: 16, color: '#6b7280', fontSize: 14 }}>
+                カレンダーを表示するにはJavaScriptを有効にしてください。
+              </p>
+            </noscript>
+          </div>
+        )}
+      </section>
 
       {/* サマリー */}
       <div style={{ background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex' }}>
