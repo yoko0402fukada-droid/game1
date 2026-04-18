@@ -31,9 +31,15 @@ function fmtShort(iso: string): string {
   return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 }
 
-// Google カレンダー（カレンダーを「公開」設定にする必要があります）
 const CALENDAR_ID = '6f648888d7459187812a96d248acd4ff7a700843baedc0744c08f80656a3ee24%40group.calendar.google.com';
-const CALENDAR_SRC = `https://calendar.google.com/calendar/embed?src=${CALENDAR_ID}&ctz=Asia%2FTokyo&hl=ja&mode=MONTH&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0`;
+const CALENDAR_BASE = `https://calendar.google.com/calendar/embed?src=${CALENDAR_ID}&ctz=Asia%2FTokyo&hl=ja&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0`;
+
+type CalMode = 'MONTH' | 'WEEK' | 'AGENDA';
+const CAL_MODES: { key: CalMode; label: string; height: number }[] = [
+  { key: 'MONTH',  label: '月',   height: 420 },
+  { key: 'WEEK',   label: '週',   height: 420 },
+  { key: 'AGENDA', label: '予定リスト', height: 420 },
+];
 // 福岡市城南区別府3丁目周辺（緯度経度で指定）
 const MAP_SRC = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3323.7!2d130.3594!3d33.5808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x354191c5e2b6a8a9%3A0x0!2z56aP5bKh5biC5Z6L5Y2X5Yy65YiG5bqD77yT5LiB55uu!5e0!3m2!1sja!2sjp!4v1';
 
@@ -44,6 +50,7 @@ export default function VisitPage() {
   const [filter, setFilter] = useState<'all' | '未訪問' | '在宅' | '不在'>('all');
   const [mapOpen, setMapOpen] = useState(true);
   const [calOpen, setCalOpen] = useState(true);
+  const [calMode, setCalMode] = useState<CalMode>('MONTH');
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -123,28 +130,50 @@ export default function VisitPage() {
 
       {/* ===== カレンダーセクション ===== */}
       <section style={{ background: '#fff', borderBottom: '1px solid #e5e7eb' }}>
-        <button
-          onClick={() => setCalOpen((v) => !v)}
-          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: 17, fontWeight: 700, color: '#1d4ed8' }}
-        >
-          <span>📅 スケジュール</span>
-          <span style={{ fontSize: 20, color: '#9ca3af' }}>{calOpen ? '▲' : '▼'}</span>
-        </button>
+        {/* タイトル行 */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
+          <button
+            onClick={() => setCalOpen((v) => !v)}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', fontSize: 17, fontWeight: 700, color: '#1d4ed8', padding: 0 }}
+          >
+            <span>📅 スケジュール</span>
+            <span style={{ fontSize: 18, color: '#9ca3af' }}>{calOpen ? '▲' : '▼'}</span>
+          </button>
+          {/* 表示切替ボタン */}
+          {calOpen && (
+            <div style={{ display: 'flex', gap: 6 }}>
+              {CAL_MODES.map(({ key, label }) => (
+                <button
+                  key={key}
+                  onClick={() => setCalMode(key)}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: 20,
+                    fontSize: 14,
+                    fontWeight: calMode === key ? 700 : 400,
+                    border: calMode === key ? '2px solid #1d4ed8' : '2px solid #d1d5db',
+                    background: calMode === key ? '#1d4ed8' : '#fff',
+                    color: calMode === key ? '#fff' : '#374151',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        {/* iframeエリア */}
         {calOpen && (
-          <div style={{ position: 'relative', width: '100%', height: 420 }}>
+          <div style={{ width: '100%', height: CAL_MODES.find(m => m.key === calMode)!.height, overflow: 'hidden' }}>
             <iframe
-              src={CALENDAR_SRC}
+              key={calMode}
+              src={`${CALENDAR_BASE}&mode=${calMode}`}
               width="100%"
-              height="420"
+              height={CAL_MODES.find(m => m.key === calMode)!.height}
               style={{ border: 0, display: 'block' }}
               scrolling="no"
             />
-            {/* カレンダーが非公開の場合のフォールバック案内 */}
-            <noscript>
-              <p style={{ padding: 16, color: '#6b7280', fontSize: 14 }}>
-                カレンダーを表示するにはJavaScriptを有効にしてください。
-              </p>
-            </noscript>
           </div>
         )}
       </section>
