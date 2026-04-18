@@ -33,7 +33,7 @@ function fmtShort(iso: string): string {
 
 // Google カレンダー（カレンダーを「公開」設定にする必要があります）
 const CALENDAR_ID = '6f648888d7459187812a96d248acd4ff7a700843baedc0744c08f80656a3ee24%40group.calendar.google.com';
-const CALENDAR_SRC = `https://calendar.google.com/calendar/embed?src=${CALENDAR_ID}&ctz=Asia%2FTokyo&hl=ja&mode=AGENDA&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0`;
+const CALENDAR_SRC = `https://calendar.google.com/calendar/embed?src=${CALENDAR_ID}&ctz=Asia%2FTokyo&hl=ja&mode=MONTH&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0`;
 // 福岡市城南区別府3丁目周辺（緯度経度で指定）
 const MAP_SRC = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3323.7!2d130.3594!3d33.5808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x354191c5e2b6a8a9%3A0x0!2z56aP5bKh5biC5Z6L5Y2X5Yy65YiG5bqD77yT5LiB55uu!5e0!3m2!1sja!2sjp!4v1';
 
@@ -131,11 +131,11 @@ export default function VisitPage() {
           <span style={{ fontSize: 20, color: '#9ca3af' }}>{calOpen ? '▲' : '▼'}</span>
         </button>
         {calOpen && (
-          <div style={{ position: 'relative', width: '100%', height: 340 }}>
+          <div style={{ position: 'relative', width: '100%', height: 420 }}>
             <iframe
               src={CALENDAR_SRC}
               width="100%"
-              height="340"
+              height="420"
               style={{ border: 0, display: 'block' }}
               scrolling="no"
             />
