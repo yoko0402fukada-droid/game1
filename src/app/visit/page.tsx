@@ -4,78 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { locations, getAddress, getYahooMapUrl, type Location } from './data';
 
-const CORRECT_PIN = '1914';
-const AUTH_KEY = 'visit_auth';
-
-function PinScreen({ onUnlock }: { onUnlock: () => void }) {
-  const [pin, setPin] = useState('');
-  const [error, setError] = useState(false);
-
-  function handleKey(digit: string) {
-    if (pin.length >= 4) return;
-    const next = pin + digit;
-    setPin(next);
-    setError(false);
-    if (next.length === 4) {
-      if (next === CORRECT_PIN) {
-        sessionStorage.setItem(AUTH_KEY, '1');
-        onUnlock();
-      } else {
-        setTimeout(() => { setPin(''); setError(true); }, 400);
-      }
-    }
-  }
-
-  function handleDelete() {
-    setPin((p) => p.slice(0, -1));
-    setError(false);
-  }
-
-  const digits = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
-
-  return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#1d4ed8', fontFamily: 'system-ui, sans-serif' }}>
-      <div style={{ background: '#fff', borderRadius: 24, padding: '40px 32px', width: 300, boxShadow: '0 8px 32px rgba(0,0,0,0.2)', textAlign: 'center' }}>
-        <div style={{ fontSize: 40, marginBottom: 8 }}>🔒</div>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: '#1d4ed8', margin: '0 0 4px' }}>訪問管理表</h1>
-        <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 28px' }}>別府3丁目エリア</p>
-
-        {/* PINドット */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginBottom: 8 }}>
-          {[0,1,2,3].map((i) => (
-            <div key={i} style={{
-              width: 18, height: 18, borderRadius: '50%',
-              background: pin.length > i ? (error ? '#ef4444' : '#1d4ed8') : '#e5e7eb',
-              transition: 'background 0.15s',
-            }} />
-          ))}
-        </div>
-        {error && <p style={{ fontSize: 13, color: '#ef4444', margin: '0 0 12px' }}>PINが違います</p>}
-        {!error && <p style={{ fontSize: 13, color: 'transparent', margin: '0 0 12px' }}>-</p>}
-
-        {/* テンキー */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-          {digits.map((d, i) => (
-            <button
-              key={i}
-              onClick={() => d === '⌫' ? handleDelete() : d !== '' ? handleKey(d) : undefined}
-              disabled={d === ''}
-              style={{
-                height: 60, borderRadius: 12, border: 'none', cursor: d === '' ? 'default' : 'pointer',
-                background: d === '' ? 'transparent' : d === '⌫' ? '#f3f4f6' : '#f8fafc',
-                fontSize: d === '⌫' ? 22 : 24, fontWeight: 600, color: '#1f2937',
-                boxShadow: d === '' ? 'none' : '0 1px 3px rgba(0,0,0,0.1)',
-                transition: 'background 0.1s',
-              }}
-            >
-              {d}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 type Status = '在宅' | '不在';
 
@@ -117,7 +45,6 @@ const CAL_MODES: { key: CalMode; label: string; height: number }[] = [
 const MAP_SRC = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3323.7!2d130.3594!3d33.5808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x354191c5e2b6a8a9%3A0x0!2z56aP5bKh5biC5Z6L5Y2X5Yy65YiG5bqD77yT5LiB55uu!5e0!3m2!1sja!2sjp!4v1';
 
 export default function VisitPage() {
-  const [authed, setAuthed] = useState(false);
   const [visitData, setVisitData] = useState<VisitData>({});
   const [recordModal, setRecordModal] = useState<Location | null>(null);
   const [historyModal, setHistoryModal] = useState<Location | null>(null);
@@ -127,13 +54,9 @@ export default function VisitPage() {
   const [calMode, setCalMode] = useState<CalMode>('MONTH');
 
   useEffect(() => {
-    // PIN認証チェック
-    if (sessionStorage.getItem(AUTH_KEY) === '1') setAuthed(true);
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) setVisitData(JSON.parse(saved));
   }, []);
-
-  if (!authed) return <PinScreen onUnlock={() => setAuthed(true)} />;
 
   function save(data: VisitData) {
     setVisitData(data);
